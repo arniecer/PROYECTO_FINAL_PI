@@ -4,7 +4,7 @@
 
 -- Contraseñas encriptadas con BCrypt
 -- admin / admin123
--- user  / user123
+-- user / user123
 
 INSERT IGNORE INTO users (username, email, password, role, name, created_at) VALUES
 ('admin', 'admin@grandspicy.com', '$2a$10$ResYFColE.lsaRQRyF89Ee3hscZi.OhDhSEzRZtt6mLRPHrSMg4Mu', 'ADMIN', 'Administrador', NOW()),

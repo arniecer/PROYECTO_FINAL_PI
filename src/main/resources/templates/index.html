@@ -6,44 +6,44 @@
 <div th:replace="~{layout::header}"></div>
 
 <section class="hero">
-    <img src="/img/hero.jpg" alt="GrandSpicy Hero">
-    <div class="hero-text">
-        <h1>Descubre el Mundo del Picante</h1>
-        <p>La comunidad donde explorar, opinar y descubrir los productos picantes más increíbles del mundo.</p>
-        <a href="/products" class="btn">Explorar catálogo</a>
-    </div>
+ <img src="/img/hero.jpg" alt="GrandSpicy Hero">
+ <div class="hero-text">
+  <h1>Descubre el Mundo del Picante</h1>
+  <p>La comunidad donde explorar, opinar y descubrir los productos picantes más increíbles del mundo.</p>
+  <a href="/products" class="btn">Explorar catálogo</a>
+ </div>
 </section>
 
 <section class="container">
-    <h2>Productos Destacados</h2>
-    <div class="grid">
-        <div class="card" th:each="product : ${products}">
-            <a th:href="@{/products/{id}(id=${product.id})}">
-                <img th:src="${product.imageData != null} ? @{/images/product/{id}(id=${product.id})} : @{/img/{img}(img=${product.image})}" th:alt="${product.name}">
-            </a>
-            <a th:href="@{/products/{id}(id=${product.id})}" class="title" th:text="${product.name}">Producto</a>
-            <div class="card-meta">
-                <span class="price" th:text="${#strings.concat(product.price, '€')}">0.00€</span>
-                <span class="scoville-badge" th:if="${product.scovilleLevel != null}">
-                    🌶️ <span th:text="${product.scovilleLevel}">0</span> SHU
-                </span>
-            </div>
-            <span th:utext="${#strings.repeat('⭐', product.rating.intValue())}"></span>
-            <p class="origin" th:text="${product.countryOfOrigin}">País</p>
-            <a th:href="@{/products/{id}(id=${product.id})}" class="btn">Ver reseñas</a>
-        </div>
-    </div>
+ <h2>Productos Destacados</h2>
+ <div class="grid">
+  <div class="card" th:each="product : ${products}">
+   <a th:href="@{/products/{id}(id=${product.id})}">
+    <img th:src="${product.imageData != null} ? @{/images/product/{id}(id=${product.id})} : @{/img/{img}(img=${product.image})}" th:alt="${product.name}">
+   </a>
+   <a th:href="@{/products/{id}(id=${product.id})}" class="title" th:text="${product.name}">Producto</a>
+   <div class="card-meta">
+    <span class="price" th:text="${#strings.concat(product.price, '€')}">0.00€</span>
+    <span class="scoville-badge" th:if="${product.scovilleLevel != null}">
+      <span th:text="${product.scovilleLevel}">0</span> SHU
+    </span>
+   </div>
+   <span th:utext="${#strings.repeat('', product.rating.intValue())}"></span>
+   <p class="origin" th:text="${product.countryOfOrigin}">País</p>
+   <a th:href="@{/products/{id}(id=${product.id})}" class="btn">Ver reseñas</a>
+  </div>
+ </div>
 </section>
 
 <section class="container reviews-section">
-    <h2>Últimas Reseñas</h2>
-    <div class="review" th:each="review : ${recentReviews}">
-        <p><strong th:text="${review.user.name}">Usuario</strong> en
-        <a th:href="@{/products/{id}(id=${review.product.id})}" class="review-product-link" th:text="${review.product.name}">Producto</a></p>
-        <span th:utext="${#strings.repeat('⭐', review.rating)}"></span>
-        <p th:text="${review.comment}">Comentario</p>
-        <small th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">Fecha</small>
-    </div>
+ <h2>Últimas Reseñas</h2>
+ <div class="review" th:each="review : ${recentReviews}">
+  <p><strong th:text="${review.user.name}">Usuario</strong> en
+  <a th:href="@{/products/{id}(id=${review.product.id})}" class="review-product-link" th:text="${review.product.name}">Producto</a></p>
+  <span th:utext="${#strings.repeat('', review.rating)}"></span>
+  <p th:text="${review.comment}">Comentario</p>
+  <small th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">Fecha</small>
+ </div>
 </section>
 
 <div th:replace="~{layout::footer}"></div>

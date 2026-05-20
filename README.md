@@ -1,8 +1,8 @@
-# 🌶️ GrandSpicy
+# GrandSpicy
 
 Plataforma web para descubrir y reseñar productos picantes de todo el mundo.
 
-## 🚀 Tecnologías
+## Tecnologías
 
 - **Backend**: Spring Boot 3.2, Spring MVC, Spring Data JPA, Spring Security
 - **Frontend**: Thymeleaf, HTML, CSS (sin JavaScript)
@@ -10,7 +10,7 @@ Plataforma web para descubrir y reseñar productos picantes de todo el mundo.
 - **Build**: Maven
 - **Despliegue**: Docker / Docker Compose / AWS EC2
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 - Catálogo de productos picantes con nivel Scoville, país de origen y enlaces de compra
 - Sistema de reseñas y valoraciones de la comunidad
@@ -20,19 +20,19 @@ Plataforma web para descubrir y reseñar productos picantes de todo el mundo.
 - Subida de imágenes a base de datos
 - Diseño responsive con paleta rojo/negro
 
-## 🧑‍💻 Usuarios por defecto
+## Usuarios por defecto
 
 | Usuario | Contraseña | Rol |
 |---------|------------|-----|
 | admin | admin123 | ADMIN |
 | user | user123 | USER |
 
-## 🐳 Docker
+## Docker
 
 ```bash
 docker-compose up --build
 ```
 
-## 📄 Documentación
+## Documentación
 
 Ver [DOCUMENTACION.md](DOCUMENTACION.md) para información detallada sobre despliegue, AWS, HTTPS, DAFO, CAME, etc.

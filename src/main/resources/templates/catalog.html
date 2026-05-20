@@ -6,26 +6,26 @@
 <div th:replace="~{layout::header}"></div>
 
 <section class="container">
-    <h1>Catálogo de Productos Picantes</h1>
-    <p class="catalog-subtitle">Explora, compara y descubre dónde comprar los mejores productos picantes del mundo.</p>
+ <h1>Catálogo de Productos Picantes</h1>
+ <p class="catalog-subtitle">Explora, compara y descubre dónde comprar los mejores productos picantes del mundo.</p>
 
-    <div class="grid">
-        <div class="card" th:each="product : ${products}">
-            <a th:href="@{/products/{id}(id=${product.id})}">
-                <img th:src="${product.imageData != null} ? @{/images/product/{id}(id=${product.id})} : @{/img/{img}(img=${product.image})}" th:alt="${product.name}">
-            </a>
-            <a th:href="@{/products/{id}(id=${product.id})}" class="title" th:text="${product.name}">Producto</a>
-            <div class="card-meta">
-                <span class="price" th:text="${#strings.concat(product.price, '€')}">0.00€</span>
-                <span class="scoville-badge" th:if="${product.scovilleLevel != null}">
-                    🌶️ <span th:text="${product.scovilleLevel}">0</span> SHU
-                </span>
-            </div>
-            <span th:utext="${#strings.repeat('⭐', product.rating.intValue())}"></span>
-            <p class="origin" th:text="${product.countryOfOrigin}">País</p>
-            <a th:href="@{/products/{id}(id=${product.id})}" class="btn">Ver reseñas</a>
-        </div>
-    </div>
+ <div class="grid">
+  <div class="card" th:each="product : ${products}">
+   <a th:href="@{/products/{id}(id=${product.id})}">
+    <img th:src="${product.imageData != null} ? @{/images/product/{id}(id=${product.id})} : @{/img/{img}(img=${product.image})}" th:alt="${product.name}">
+   </a>
+   <a th:href="@{/products/{id}(id=${product.id})}" class="title" th:text="${product.name}">Producto</a>
+   <div class="card-meta">
+    <span class="price" th:text="${#strings.concat(product.price, '€')}">0.00€</span>
+    <span class="scoville-badge" th:if="${product.scovilleLevel != null}">
+      <span th:text="${product.scovilleLevel}">0</span> SHU
+    </span>
+   </div>
+   <span th:utext="${#strings.repeat('', product.rating.intValue())}"></span>
+   <p class="origin" th:text="${product.countryOfOrigin}">País</p>
+   <a th:href="@{/products/{id}(id=${product.id})}" class="btn">Ver reseñas</a>
+  </div>
+ </div>
 </section>
 
 <div th:replace="~{layout::footer}"></div>
