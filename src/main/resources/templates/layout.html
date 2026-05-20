@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">GrandSpicy</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo"><a href="/">GrandSpicy</a></div>
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/products">Catálogo</a>
+    </nav>
+    <div class="icons">
+        <a sec:authorize="isAnonymous()" href="/login" class="icon">
+            <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+            </svg>
+        </a>
+        <a sec:authorize="isAuthenticated()" href="/profile" class="icon">
+            <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+            </svg>
+        </a>
+    </div>
+</header>
+
+<main th:fragment="content">
+</main>
+
+<footer class="footer">
+    <p>&copy; 2025 GrandSpicy - Comunidad picante</p>
+</footer>
+
+</body>
+</html>
