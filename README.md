@@ -8,7 +8,7 @@ Plataforma web para descubrir y reseñar productos picantes de todo el mundo.
 - **Frontend**: Thymeleaf, HTML, CSS (sin JavaScript)
 - **Base de datos**: MySQL 8.0
 - **Build**: Maven
-- **Despliegue**: Docker / Docker Compose / AWS EC2
+- **Despliegue**: Docker / Docker Compose
 
 ## Funcionalidades
 
@@ -35,4 +35,4 @@ docker-compose up --build
 
 ## Documentación
 
-Ver [DOCUMENTACION.md](DOCUMENTACION.md) para información detallada sobre despliegue, AWS, HTTPS, DAFO, CAME, etc.
+Ver [DOCUMENTACION.md](DOCUMENTACION.md) para información detallada sobre despliegue, HTTPS, DAFO, CAME, etc.

@@ -43,6 +43,7 @@ gestionar productos y usuarios desde un panel de control.
 | CSS3 | - | Estilos visuales |
 | Docker | - | Contenedores |
 
+
 ## Estructura del proyecto
 
 ```
@@ -134,42 +135,6 @@ grandspicy/
 ```bash
 docker-compose down
 ```
-
-## Despliegue en AWS EC2
-
-### Requisitos
-- Instancia EC2 con Ubuntu
-- Docker y Docker Compose instalados
-- Puerto 8080 abierto en el grupo de seguridad
-
-### Pasos
-
-1. Conectarse a la instancia EC2 por SSH:
-   ```bash
-   ssh -i clave.pem ubuntu@ip-ec2
-   ```
-
-2. Instalar Docker:
-   ```bash
-   sudo apt update
-   sudo apt install docker.io docker-compose -y
-   ```
-
-3. Clonar o copiar el proyecto:
-   ```bash
-   git clone https://github.com/tu-usuario/grandspicy.git
-   cd grandspicy
-   ```
-
-4. Ejecutar con Docker Compose:
-   ```bash
-   sudo docker-compose up --build -d
-   ```
-
-5. Acceder desde:
-   ```
-   http://ip-ec2:8080
-   ```
 
 ## HTTPS
 
