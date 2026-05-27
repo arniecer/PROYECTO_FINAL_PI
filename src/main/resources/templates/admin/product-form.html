@@ -8,6 +8,8 @@
 <section class="container form-container">
  <h1 th:text="${product.id == null} ? 'Añadir Producto' : 'Editar Producto'">Formulario Producto</h1>
 
+ <div th:if="${error}" class="alert alert-error" th:text="${error}">Error</div>
+
  <form th:action="@{/admin/products/save}" th:object="${product}" method="post" enctype="multipart/form-data">
   <input type="hidden" th:field="*{id}">
 
@@ -25,7 +27,7 @@
   <span th:if="${product.image}" class="file-hint">Imagen actual: <span th:text="${product.image}"></span></span>
 
   <label for="category">Categoría:</label>
-  <select id="category" th:field="*{category}">
+  <select id="category" th:field="*{category}" required>
    <option value="Salsas">Salsas</option>
    <option value="Chiles secos">Chiles secos</option>
    <option value="Snacks">Snacks</option>
@@ -41,7 +43,7 @@
   <input type="url" id="purchaseLink" th:field="*{purchaseLink}" placeholder="https://...">
 
   <label for="rating">Valoración:</label>
-  <input type="number" id="rating" th:field="*{rating}" step="0.1" min="0" max="5">
+  <input type="number" id="rating" th:field="*{rating}" step="0.1" min="0" max="5" required>
 
   <button type="submit" class="btn">Guardar</button>
   <a href="/admin/products" class="btn btn-secondary">Cancelar</a>

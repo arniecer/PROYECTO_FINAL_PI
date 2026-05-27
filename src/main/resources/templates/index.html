@@ -28,7 +28,7 @@
       <span th:text="${product.scovilleLevel}">0</span> SHU
     </span>
    </div>
-   <span th:utext="${#strings.repeat('', product.rating.intValue())}"></span>
+   <span class="rating" th:text="${#strings.concat(product.rating, ' / 5')}">0 / 5</span>
    <p class="origin" th:text="${product.countryOfOrigin}">País</p>
    <a th:href="@{/products/{id}(id=${product.id})}" class="btn">Ver reseñas</a>
   </div>
@@ -40,7 +40,7 @@
  <div class="review" th:each="review : ${recentReviews}">
   <p><strong th:text="${review.user.name}">Usuario</strong> en
   <a th:href="@{/products/{id}(id=${review.product.id})}" class="review-product-link" th:text="${review.product.name}">Producto</a></p>
-  <span th:utext="${#strings.repeat('', review.rating)}"></span>
+  <span class="rating" th:text="${#strings.concat(review.rating, ' / 5')}"></span>
   <p th:text="${review.comment}">Comentario</p>
   <small th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">Fecha</small>
  </div>

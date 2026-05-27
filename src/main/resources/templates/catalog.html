@@ -21,7 +21,7 @@
       <span th:text="${product.scovilleLevel}">0</span> SHU
     </span>
    </div>
-   <span th:utext="${#strings.repeat('', product.rating.intValue())}"></span>
+   <span class="rating" th:text="${#strings.concat(product.rating, ' / 5')}">0 / 5</span>
    <p class="origin" th:text="${product.countryOfOrigin}">País</p>
    <a th:href="@{/products/{id}(id=${product.id})}" class="btn">Ver reseñas</a>
   </div>

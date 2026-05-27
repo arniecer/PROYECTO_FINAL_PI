@@ -2,9 +2,9 @@
 
 ## Descripción del Proyecto
 
-GrandSpicy es una aplicación web de tienda online especializada en productos picantes.
+GrandSpicy es una comunidad web especializada en productos picantes.
 Desarrollada con Spring Boot, permite a los usuarios navegar por un catálogo de productos,
-registrarse, iniciar sesión, dejar reseñas y realizar pedidos. Los administradores pueden
+registrarse, iniciar sesión, dejar reseñas y descubrir dónde comprar. Los administradores pueden
 gestionar productos y usuarios desde un panel de control.
 
 ## Funcionalidades
@@ -18,8 +18,7 @@ gestionar productos y usuarios desde un panel de control.
 
 ### Usuarios registrados
 - Gestionar su perfil
-- Realizar pedidos de productos
-- Ver historial de pedidos
+- Ver sus reseñas
 - Dejar reseñas en productos
 
 ### Administradores
@@ -62,15 +61,12 @@ grandspicy/
 │   │   ├── AuthController.java        # Registro de usuarios
 │   │   ├── ProductController.java     # Catálogo y detalle
 │   │   ├── ReviewController.java      # Reseñas
-│   │   ├── OrderController.java       # Pedidos
 │   │   ├── ProfileController.java     # Perfil de usuario
 │   │   └── AdminController.java       # Administración
 │   ├── model/
 │   │   ├── User.java                  # Entidad usuario
 │   │   ├── Product.java               # Entidad producto
-│   │   ├── Review.java                # Entidad reseña
-│   │   ├── Order.java                 # Entidad pedido
-│   │   └── OrderItem.java             # Entidad detalle pedido
+│   │   └── Review.java                # Entidad reseña
 │   ├── repository/                    # Repositorios JPA
 │   └── service/                       # Lógica de negocio
 └── src/main/resources/
@@ -95,16 +91,11 @@ grandspicy/
 - **users**: Almacena los usuarios del sistema
 - **products**: Catálogo de productos picantes
 - **reviews**: Reseñas de usuarios sobre productos
-- **orders**: Pedidos realizados por usuarios
-- **order_items**: Detalle de cada pedido
 
 ### Relaciones
 
-- Un usuario tiene muchos pedidos (1:N)
 - Un usuario tiene muchas reseñas (1:N)
 - Un producto tiene muchas reseñas (1:N)
-- Un pedido tiene muchos items (1:N)
-- Un producto aparece en muchos items de pedido (1:N)
 
 ## Usuarios por defecto
 
@@ -184,7 +175,6 @@ cat backup.sql | docker exec -i grandspicy-mysql mysql -u root -proot grandspicy
 - Sin JavaScript, la interfaz es menos dinámica
 - Dependencia de MySQL como única base de datos
 - Seguridad básica sin verificación de email
-- Sin pasarela de pago real
 
 ### Amenazas
 - Competencia de grandes plataformas de comercio electrónico
@@ -198,7 +188,6 @@ cat backup.sql | docker exec -i grandspicy-mysql mysql -u root -proot grandspicy
 
 ### Oportunidades
 - Ampliación a más categorías de productos
-- Integración de pasarela de pago
 - Mejora de la interfaz con diseño responsive
 - Internacionalización
 

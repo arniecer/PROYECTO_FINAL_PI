@@ -43,7 +43,14 @@ public class AdminController {
 
     @PostMapping("/products/save")
     public String saveProduct(@ModelAttribute Product product,
-                              @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
+                              @RequestParam("imageFile") MultipartFile imageFile,
+                              Model model) throws IOException {
+        var existing = productService.findByName(product.getName());
+        if (existing.isPresent() && !existing.get().getId().equals(product.getId())) {
+            model.addAttribute("product", product);
+            model.addAttribute("error", "Ya existe un producto con ese nombre");
+            return "admin/product-form";
+        }
         if (!imageFile.isEmpty()) {
             product.setImageData(imageFile.getBytes());
             product.setImage(imageFile.getOriginalFilename());
@@ -62,7 +69,7 @@ public class AdminController {
         return "redirect:/admin/products";
     }
 
-    @GetMapping("/products/delete/{id}")
+    @PostMapping("/products/delete/{id}")
     public String deleteProduct(@PathVariable Long id) {
         productService.deleteById(id);
         return "redirect:/admin/products";

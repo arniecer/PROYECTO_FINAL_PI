@@ -15,20 +15,10 @@
   <a href="/">Inicio</a>
   <a href="/products">Catálogo</a>
  </nav>
- <div class="icons">
-  <a sec:authorize="isAnonymous()" href="/login" class="icon">
-   <svg viewBox="0 0 24 24">
-    <circle cx="12" cy="8" r="4"/>
-    <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
-   </svg>
-  </a>
-  <a sec:authorize="isAuthenticated()" href="/profile" class="icon">
-   <svg viewBox="0 0 24 24">
-    <circle cx="12" cy="8" r="4"/>
-    <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
-   </svg>
-  </a>
- </div>
+  <div class="auth-links">
+   <a sec:authorize="isAnonymous()" href="/login">Iniciar sesión</a>
+   <a sec:authorize="isAuthenticated()" href="/profile">Mi perfil</a>
+  </div>
 </header>
 
 <main th:fragment="content">

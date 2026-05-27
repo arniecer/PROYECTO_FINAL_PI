@@ -35,4 +35,8 @@ public class ProductService {
     public List<Product> findByCategory(String category) {
         return productRepository.findByCategory(category);
     }
+
+    public Optional<Product> findByName(String name) {
+        return productRepository.findByName(name);
+    }
 }

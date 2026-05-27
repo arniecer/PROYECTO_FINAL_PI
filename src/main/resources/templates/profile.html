@@ -26,7 +26,7 @@
  </div>
  <div class="review" th:each="review : ${reviews}">
   <p><strong th:text="${review.product.name}">Producto</strong></p>
-  <span th:utext="${#strings.repeat('', review.rating)}"></span>
+  <span class="rating" th:text="${#strings.concat(review.rating, ' / 5')}"></span>
   <p th:text="${review.comment}">Comentario</p>
   <small th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">Fecha</small>
   <a th:href="@{/products/{id}(id=${review.product.id})}" class="btn-small">Ver producto</a>

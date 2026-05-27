@@ -31,11 +31,12 @@
     <td th:text="${product.countryOfOrigin} ?: '-'">País</td>
     <td th:text="${product.category}">Categoría</td>
     <td th:text="${product.rating}">0</td>
-    <td>
-     <a th:href="@{/admin/products/edit/{id}(id=${product.id})}" class="btn-small">Editar</a>
-     <a th:href="@{/admin/products/delete/{id}(id=${product.id})}" class="btn-small btn-danger"
-      onclick="return confirm('¿Eliminar producto?')">Eliminar</a>
-    </td>
+     <td class="actions">
+      <a th:href="@{/admin/products/edit/{id}(id=${product.id})}" class="btn-small">Editar</a>
+      <form th:action="@{/admin/products/delete/{id}(id=${product.id})}" method="post" class="inline-form">
+       <button type="submit" class="btn-small btn-danger">Eliminar</button>
+      </form>
+     </td>
    </tr>
   </tbody>
  </table>

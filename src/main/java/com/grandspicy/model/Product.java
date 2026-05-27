@@ -49,7 +49,9 @@ public class Product {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Product() {}
+    public Product() {
+        this.rating = 0.0;
+    }
 
     public Product(String name, String description, Double price, String image, String category,
                    Integer scovilleLevel, String countryOfOrigin, String purchaseLink, Double rating) {
@@ -61,7 +63,7 @@ public class Product {
         this.scovilleLevel = scovilleLevel;
         this.countryOfOrigin = countryOfOrigin;
         this.purchaseLink = purchaseLink;
-        this.rating = rating;
+        this.rating = (rating != null) ? rating : 0.0;
     }
 
     public Long getId() { return id; }
