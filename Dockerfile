@@ -1,18 +1,11 @@
-# ========================================
-# DOCKERFILE DE GRANDSPICY
-# ========================================
-
-FROM openjdk:17-jdk-slim AS build
+FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /app
 COPY pom.xml .
-COPY mvnw .
-COPY .mvn .mvn
-RUN chmod +x mvnw
-COPY src src
-RUN ./mvnw package -DskipTests
+RUN mvn dependency:go-offline -B
+COPY src ./src
+RUN mvn package -DskipTests -B
 
-FROM openjdk:17-jdk-slim
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+FROM tomcat:9-jdk17
+COPY --from=builder /app/target/ROOT.war /usr/local/tomcat/webapps/ROOT.war
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["catalina.sh", "run"]

@@ -9,11 +9,9 @@ target/
 *.tar.gz
 
 # ========================================
-# MAVEN WRAPPER
+# TOMCAT EMBEDDED
 # ========================================
-mvnw
-mvnw.cmd
-.mvn/
+tomcat.*/
 
 # ========================================
 # IDE CONFIGURATION FILES
@@ -51,31 +49,16 @@ logs/
 mysql_data/
 
 # ========================================
-# DOCUMENTATION & DEFENSE FILES
-# ========================================
-*DEFENSA*
-*defensa*
-*DOCUMENTACION_TECNICA*
-*EXPLICACION_CODIGO*
-*chuleta*
-*cheatsheet*
-notas.txt
-apuntes.txt
-
-# ========================================
 # ENVIRONMENT & SECRETS
 # ========================================
 .env
 *.env.local
-application-local.properties
-application-dev.properties
-clave.txt
 *.token
 secrets.*
+clave.txt
 
 # ========================================
 # DATABASE
 # ========================================
 *.sql
-!src/main/resources/data.sql
-!src/main/resources/schema.sql
+!src/main/resources/init.sql

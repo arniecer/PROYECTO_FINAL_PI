@@ -1,32 +1,36 @@
-# ========================================
-# DOCKER COMPOSE DE GRANDSPICY
-# ========================================
-
-version: '3.8'
-
 services:
   mysql:
     image: mysql:8.0
-    container_name: grandspicy-mysql
+    container_name: grandspicy-db
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: grandspicy
     ports:
       - "3307:3306"
     volumes:
+      - ./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
     networks:
       - grandspicy_network
 
   app:
     build: .
     container_name: grandspicy-app
+    restart: unless-stopped
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/grandspicy?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
+      DB_URL: jdbc:mysql://mysql:3306/grandspicy?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USER: root
+      DB_PASSWORD: root
     ports:
       - "8080:8080"
     networks:

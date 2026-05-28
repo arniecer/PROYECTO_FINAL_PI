@@ -1,19 +1,6 @@
 # GrandSpicy
 
-Plataforma web para descubrir, valorar y compartir opiniones sobre productos picantes de todo el mundo. Catalogo de salsas, especias, snacks y aceites con sistema de reseñas de comunidad y panel de administracion.
-
----
-
-## Tabla de contenidos
-
-- [Stack tecnologico](#stack-tecnologico)
-- [Funcionalidades](#funcionalidades)
-- [Inicio rapido](#inicio-rapido)
-- [Estructura del proyecto](#estructura-del-proyecto)
-- [Usuarios por defecto](#usuarios-por-defecto)
-- [Modelo de datos](#modelo-de-datos)
-- [Despliegue](#despliegue)
-- [Licencia](#licencia)
+Plataforma web de catalogo de productos picantes con sistema de reseñas de comunidad y panel de administracion. Desarrollada con Servlets, JSP, JDBC y MySQL.
 
 ---
 
@@ -21,16 +8,17 @@ Plataforma web para descubrir, valorar y compartir opiniones sobre productos pic
 
 | Capa | Tecnologia |
 |------|-----------|
-| Lenguaje | Java 17 |
-| Framework | Spring Boot 3.2.0 |
-| Seguridad | Spring Security 6 |
-| Persistencia | Spring Data JPA / Hibernate |
+| Lenguaje | Java 17 (OpenJDK 21 compatible) |
+| Backend | Servlets 4.0 + JSP + JSTL |
+| Frontend | HTML5, CSS3 (tema oscuro responsive) |
 | Base de datos | MySQL 8.0 |
-| Frontend | Thymeleaf, HTML5, CSS3 |
-| Build | Maven |
+| Acceso a datos | JDBC puro (PreparedStatement) |
+| Servidor web | Apache Tomcat 9 (embebido o Docker) |
+| Build | Maven 3.9 |
 | Contenedores | Docker / Docker Compose |
+| Control de versiones | Git |
 
-La aplicacion sigue el patron **Modelo-Vista-Controlador (MVC)** con una arquitectura en capas: controladores, servicios, repositorios y entidades.
+Sin frameworks externos (no Spring Boot, no JPA, no Hibernate). Tecnologias puras de Java EE correspondientes a 1º de DAM.
 
 ---
 
@@ -38,74 +26,43 @@ La aplicacion sigue el patron **Modelo-Vista-Controlador (MVC)** con una arquite
 
 ### Visitantes (no autenticados)
 
-- Visualizar pagina principal con productos destacados y reseñas recientes
-- Navegar por el catalogo completo de productos
-- Ver detalle de cada producto (descripcion, precio, nivel Scoville, pais de origen)
-- Registrarse en la plataforma
+- Pagina principal con productos destacados y reseñas recientes
+- Catalogo completo con filtro por categoria
+- Detalle de producto con descripcion, precio, nivel Scoville, pais de origen y enlace de compra
+- Registro de nuevo usuario
 
 ### Usuarios registrados (rol USER)
 
-- Iniciar y cerrar sesion
-- Escribir reseñas y valoraciones (1-5) en productos
-- Ver perfil personal con historial de reseñas
-- Realizar pedidos y consultar historial
+- Inicio y cierre de sesion
+- Escritura de reseñas y valoraciones (1-5) en productos
+- Perfil personal con historial de reseñas
 
 ### Administradores (rol ADMIN)
 
-- Panel de administracion con dashboard de estadisticas
-- CRUD completo de productos (Crear, Leer, Actualizar, Eliminar)
-- Gestion de usuarios (listar y eliminar)
-- Gestion de pedidos
+- Dashboard con estadisticas (conteo de productos y usuarios)
+- CRUD completo de productos (alta, edicion, eliminacion)
+- Subida de imagenes almacenadas como BLOB en base de datos
+- Gestion de usuarios (listado y eliminacion)
 
 ---
 
 ## Inicio rapido
 
-### Con Docker (recomendado)
+### Con Docker
 
 ```bash
 docker-compose up --build
 ```
 
-La aplicacion estara disponible en `http://localhost:8080`.
+Acceder en `http://localhost:8080`.
 
-### Sin Docker (desarrollo local)
+### En desarrollo (Tomcat embebido)
 
-1. Asegurate de tener MySQL 8.0 corriendo en `localhost:3306`
-2. Crea la base de datos:
-   ```sql
-   CREATE DATABASE IF NOT EXISTS grandspicy;
-   ```
-3. Compila y ejecuta:
-   ```bash
-   ./mvnw spring-boot:run
-   ```
-
----
-
-## Estructura del proyecto
-
+```bash
+mvn clean compile exec:java
 ```
-src/main/java/com/grandspicy/
-  ├── GrandSpicyApplication.java    # Punto de entrada
-  ├── config/
-  │   ├── SecurityConfig.java       # Configuracion Spring Security
-  │   └── MvcConfig.java            # Configuracion Spring MVC
-  ├── controller/
-  │   ├── HomeController.java       # Pagina principal
-  │   ├── AuthController.java       # Login, registro, logout
-  │   ├── ProductController.java    # Catalogo y detalle de producto
-  │   ├── ReviewController.java     # Reseñas
-  │   ├── ProfileController.java    # Perfil de usuario
-  │   ├── AdminController.java      # Panel de administracion
-  │   └── ImageController.java      # Servir imagenes
-  ├── model/
-  │   ├── User.java                 # Entidad usuario
-  │   ├── Product.java              # Entidad producto
-  │   └── Review.java               # Entidad reseña
-  ├── repository/                   # Repositorios Spring Data JPA
-  └── service/                      # Logica de negocio
-```
+
+Requiere MySQL 8.0 corriendo en `localhost:3306`. La base de datos y tablas se crean automaticamente al iniciar.
 
 ---
 
@@ -113,38 +70,56 @@ src/main/java/com/grandspicy/
 
 | Usuario | Contraseña | Rol |
 |---------|------------|-----|
-| admin | admin123 | ADMIN |
+| admin | admin1234 | ADMIN |
 | user | user123 | USER |
 
 ---
 
-## Modelo de datos
+## Estructura del proyecto
 
-La base de datos contiene tres tablas principales:
-
-- **users** - Almacena usuarios del sistema con rol (USER/ADMIN)
-- **products** - Catalogo de productos picantes con imagen almacenada como BLOB
-- **reviews** - Reseñas de usuarios vinculadas a productos mediante claves foraneas
-
-Las reseñas utilizan `ON DELETE CASCADE` para mantener la integridad referencial.
+```
+src/main/java/com/grandspicy/
+  ├── Main.java                  # Punto de entrada (Tomcat embebido)
+  ├── dao/
+  │   └── BaseDatos.java         # Unica clase de acceso a BD (JDBC puro)
+  ├── filtro/
+  │   └── FiltroAutenticacion.java  # Protege rutas sensibles
+  ├── modelo/
+  │   ├── Producto.java          # POJO producto
+  │   ├── Usuario.java           # POJO usuario
+  │   └── Resena.java            # POJO reseña
+  ├── servlet/
+  │   ├── InicioServlet.java     # Home y catalogo
+  │   ├── AutenticacionServlet.java  # Login, registro, logout
+  │   ├── DetalleProductoServlet.java  # Detalle de producto
+  │   ├── ResenaServlet.java     # Crear reseña
+  │   ├── PerfilServlet.java     # Perfil de usuario
+  │   ├── AdminServlet.java      # Panel de administracion
+  │   └── ImagenServlet.java     # Servir imagenes BLOB
+  └── util/
+      └── PasswordUtil.java      # Cifrado SHA-256 + salt
+```
 
 ---
 
-## Despliegue
+## Seguridad
 
-### Entorno de produccion (AWS EC2)
+- **Autenticacion por sesion** (HttpSession)
+- **Filtro de autorizacion** que protege `/admin/*`, `/profile` y `/review`
+- **Contraseñas cifradas** con SHA-256 + salt aleatorio de 16 bytes (formato `salt:hash` en base64)
+- **PreparedStatement** en todas las consultas SQL (previene inyeccion SQL)
+- **Contenedores Docker separados**: base de datos no accesible desde el exterior
 
-1. Clonar el repositorio en la instancia EC2
-2. Instalar Docker y Docker Compose
-3. Configurar variables de entorno si es necesario
-4. Ejecutar `docker-compose up -d --build`
+---
 
-### HTTPS
+## Documentacion
 
-Para entornos de produccion se recomienda utilizar Nginx como proxy inverso con Certbot para certificados SSL de Let's Encrypt.
+- `DOCUMENTACION_TECNICA.txt` - Documentacion completa del proyecto (arquitectura, BD, despliegue, DAFO, CAME)
+- `DEFENSA_PROYECTO.md` - Guion para defensa oral (5-10 min) con preguntas frecuentes y apendices
+- `EXPLICACION_CODIGO.md` - Explicacion linea por linea de todo el codigo fuente
 
 ---
 
 ## Licencia
 
-Este proyecto es de codigo abierto y fue desarrollado como proyecto final de 1º de DAM.
+Proyecto academico desarrollado para 1º de DAM.
