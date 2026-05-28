@@ -22,12 +22,10 @@ Plataforma web de catalogo de productos picantes. Los usuarios pueden descubrir 
 | Backend | Servlets 4.0 + JSP + JSTL |
 | Frontend | HTML5 + CSS3 (tema oscuro, responsive) |
 | Base de datos | MySQL 8.0 |
-| Acceso a datos | JDBC puro con PreparedStatement |
+| Acceso a datos | JDBC con PreparedStatement |
 | Servidor | Apache Tomcat 9 |
 | Build | Maven |
 | Contenedores | Docker + Docker Compose |
-
-No se han usado frameworks externos como Spring Boot, JPA o Hibernate. Todo es Java EE puro, que es lo que se ha visto durante el curso.
 
 ---
 
@@ -121,3 +119,7 @@ src/main/java/com/grandspicy/
 ## Licencia
 
 Proyecto academico - 1º de DAM.
+
+---
+
+*README generado con ayuda de IA.*
