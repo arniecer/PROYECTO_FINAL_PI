@@ -120,6 +120,4 @@ src/main/java/com/grandspicy/
 
 Proyecto academico - 1º de DAM.
 
----
 
-*README generado con ayuda de IA.*
