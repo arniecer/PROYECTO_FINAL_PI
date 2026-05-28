@@ -1,13 +1,23 @@
 # ========================================
-# GITIGNORE DE GRANDSPICY
+# BUILD OUTPUT
 # ========================================
-
-# Maven
 target/
 *.jar
 *.war
+*.ear
+*.zip
+*.tar.gz
 
-# IDE
+# ========================================
+# MAVEN WRAPPER
+# ========================================
+mvnw
+mvnw.cmd
+.mvn/
+
+# ========================================
+# IDE CONFIGURATION FILES
+# ========================================
 .idea/
 *.iml
 .vscode/
@@ -15,13 +25,57 @@ target/
 .project
 .settings/
 *.class
+.factorypath
+.springBeans
+.apt_generated
 
-# OS
+# ========================================
+# OS FILES
+# ========================================
 .DS_Store
 Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
 
-# Logs
+# ========================================
+# LOGS
+# ========================================
 *.log
+logs/
 
-# Docker
+# ========================================
+# DOCKER
+# ========================================
 mysql_data/
+
+# ========================================
+# DOCUMENTATION & DEFENSE FILES
+# ========================================
+*DEFENSA*
+*defensa*
+*DOCUMENTACION_TECNICA*
+*EXPLICACION_CODIGO*
+*chuleta*
+*cheatsheet*
+notas.txt
+apuntes.txt
+
+# ========================================
+# ENVIRONMENT & SECRETS
+# ========================================
+.env
+*.env.local
+application-local.properties
+application-dev.properties
+clave.txt
+*.token
+secrets.*
+
+# ========================================
+# DATABASE
+# ========================================
+*.sql
+!src/main/resources/data.sql
+!src/main/resources/schema.sql
