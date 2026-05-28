@@ -58,6 +58,13 @@ secrets.*
 clave.txt
 
 # ========================================
+# PERSONAL LEARNING DOCS (not for public repo)
+# ========================================
+DEFENSA_PROYECTO.md
+DOCUMENTACION_TECNICA.txt
+EXPLICACION_CODIGO.md
+
+# ========================================
 # DATABASE
 # ========================================
 *.sql
