@@ -42,8 +42,8 @@ CREATE TABLE IF NOT EXISTS reviews (
 );
 
 INSERT IGNORE INTO users (username, email, password, role, name) VALUES
-('admin', 'admin@gmail.com', '$2a$12$gxh5n3VTtwyF0jZH.hxh/ewGZGk6POc2LUs2O/jFWXpTvZGJOfDEy', 'ADMIN', 'Administrator'),
-('user', 'user@grandspicy.com', '$2a$12$IxmQ2T6SqN9eXoq3eARtTu29AcDOpYeydUOSoKtf5WfditbaAt.VS', 'USER', 'Test User');
+('admin', 'admin@gmail.com', '$2a$12$bOryToT6N9MoT6Xgb.bz..zZK3.CBGht/vvPx4rboTsbknbrJmeTG', 'ADMIN', 'Administrator'),
+('user', 'user@grandspicy.com', '$2a$12$Xxs4FldRajN5.uTKVx35A.oSIwvvzPrcmhtXt7CpAhjjJJMaBoU2C', 'USER', 'Test User');
 
 INSERT IGNORE INTO products (name, description, price, image, category, scoville_level, country_of_origin, purchase_link, rating) VALUES
 ('Habanero XXX Sauce', 'The spiciest sauce made with red habaneros and natural vinegar.', 12.99, 'habanero.jpg', 'Salsas', 10000, 'Mexico', 'https://example.com/habanero', 4.5),
