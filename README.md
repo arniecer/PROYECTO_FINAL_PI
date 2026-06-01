@@ -51,7 +51,7 @@ docker compose up --build -d
 ./setup-ssl.sh
 ```
 
-La aplicacion arranca en `https://GrandS.yatat.es`.
+La aplicacion arranca en `https://grands.yatat.es`.
 
 ### En desarrollo (Tomcat embebido)
 

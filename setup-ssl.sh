@@ -1,8 +1,8 @@
 #!/bin/bash
-# Configura SSL con Certbot para GrandS.yatat.es
+# Configura SSL con Certbot para grands.yatat.es
 # Ejecutar en el EC2 tras el primer docker compose up
 
-DOMAIN="GrandS.yatat.es"
+DOMAIN="grands.yatat.es"
 EMAIL="admin@grandspicy.com"
 
 echo "=== Paso 1: Verificar que nginx responde en :80 ==="
