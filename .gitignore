@@ -47,6 +47,7 @@ logs/
 # DOCKER
 # ========================================
 mysql_data/
+certbot/
 
 # ========================================
 # ENVIRONMENT & SECRETS
@@ -63,6 +64,13 @@ clave.txt
 DEFENSA_PROYECTO.md
 DOCUMENTACION_TECNICA.txt
 EXPLICACION_CODIGO.md
+
+# ========================================
+# ACADEMIC DOCS
+# ========================================
+PI_final.txt
+PI - final.pdf
+*.pdf
 
 # ========================================
 # DATABASE

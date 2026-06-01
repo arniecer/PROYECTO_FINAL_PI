@@ -31,10 +31,35 @@ services:
       DB_URL: jdbc:mysql://mysql:3306/grandspicy?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       DB_USER: root
       DB_PASSWORD: root
-    ports:
-      - "8080:8080"
     networks:
       - grandspicy_network
+
+  nginx:
+    image: nginx:1.25
+    container_name: grandspicy-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./src/main/webapp/img:/usr/share/nginx/html/img
+      - ./src/main/webapp/images:/usr/share/nginx/html/images
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    networks:
+      - grandspicy_network
+
+  certbot:
+    image: certbot/certbot
+    container_name: grandspicy-certbot
+    profiles:
+      - ssl-setup
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
 
 volumes:
   mysql_data:

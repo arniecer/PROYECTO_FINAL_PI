@@ -31,13 +31,27 @@ Plataforma web de catalogo de productos picantes. Los usuarios pueden descubrir 
 
 ## Como arrancarlo
 
-### Con Docker
+### Con Docker (desarrollo local)
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
-La aplicacion arranca en `http://localhost:8080`.
+La aplicacion arranca en `http://localhost`.
+
+### En produccion (AWS EC2 con HTTPS)
+
+```bash
+# 1. Clonar y arrancar
+git clone https://github.com/arniecer/PROYECTO_FINAL_PI.git
+cd PROYECTO_FINAL_PI
+docker compose up --build -d
+
+# 2. Configurar SSL con Certbot
+./setup-ssl.sh
+```
+
+La aplicacion arranca en `https://GrandS.yatat.es`.
 
 ### En desarrollo (Tomcat embebido)
 
@@ -60,7 +74,7 @@ Necesitas tener MySQL 8.0 en `localhost:3306`. La base de datos y las tablas se 
 
 ## Docker y despliegue
 
-La aplicacion se despliega con dos contenedores:
+La aplicacion se despliega con cuatro contenedores:
 
 ```
 docker-compose.yml
@@ -72,23 +86,38 @@ docker-compose.yml
   |     - Healthcheck que espera a que MySQL este listo
   |
   +-- grandspicy-app (Tomcat 9)
-        - Puerto 8080 mapeado al host
-        - Depende de que grandspicy-db este saludable
-        - Variables de entorno: DB_URL, DB_USER, DB_PASSWORD
+  |     - Solo red interna (sin puerto expuesto al host)
+  |     - Depende de que grandspicy-db este saludable
+  |     - Variables de entorno: DB_URL, DB_USER, DB_PASSWORD
+  |
+  +-- grandspicy-nginx (Nginx 1.25)
+  |     - Puerto 80 y 443 expuestos al host
+  |     - Proxy inverso hacia grandspicy-app:8080
+  |     - Sirve estaticos (/img/, /images/) directamente
+  |     - Config SSL con Certbot
+  |
+  +-- grandspicy-certbot (Certbot)
+        - Solo se ejecuta bajo demanda (profile: ssl-setup)
+        - Genera certificados SSL para GrandS.yatat.es
 ```
 
 El Dockerfile compila el proyecto con Maven y genera un WAR que se despliega en Tomcat 9.
 
-**Para desplegar en produccion (AWS EC2 por ejemplo):**
+**Para desplegar en produccion (AWS EC2):**
 
 ```bash
-# En la maquina virtual
+# 1. En la maquina virtual
 git clone https://github.com/arniecer/PROYECTO_FINAL_PI.git
 cd PROYECTO_FINAL_PI
-docker-compose up -d --build
+
+# 2. Arrancar todo (sin SSL aun)
+docker compose up --build -d
+
+# 3. Configurar SSL con Certbot
+./setup-ssl.sh
 ```
 
-Ambos contenedores tienen `restart: unless-stopped`, asi que se levantan solos al reiniciar la maquina.
+Todos los contenedores tienen `restart: unless-stopped`, asi que se levantan solos al reiniciar la maquina.
 
 ---
 
