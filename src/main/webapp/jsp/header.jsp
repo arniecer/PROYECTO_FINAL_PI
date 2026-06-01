@@ -12,7 +12,7 @@
 <body>
 
 <header class="header">
-    <div class="logo"><a href="${pageContext.request.contextPath}/home">GrandSpicy</a></div>
+    <div class="logo"><a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/images/logo.svg" alt="GrandSpicy"></a></div>
     <nav>
         <a href="${pageContext.request.contextPath}/home">Home</a>
         <a href="${pageContext.request.contextPath}/catalog">Catalog</a>
