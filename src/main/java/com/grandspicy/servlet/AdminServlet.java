@@ -71,6 +71,7 @@ public class AdminServlet extends HttpServlet {
 
     private void guardarProducto(HttpServletRequest peticion, HttpServletResponse respuesta)
             throws IOException, ServletException {
+        peticion.setCharacterEncoding("UTF-8");
         String idParam = peticion.getParameter("id");
         Producto producto = new Producto();
         if (idParam != null && !idParam.isEmpty()) {
