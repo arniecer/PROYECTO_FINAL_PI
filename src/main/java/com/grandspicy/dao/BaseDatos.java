@@ -31,7 +31,7 @@ public class BaseDatos {
             }
         }
         return DriverManager.getConnection(
-            getEnv("DB_URL", "jdbc:mysql://localhost:3306/grandspicy?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"),
+            getEnv("DB_URL", "jdbc:mysql://localhost:3306/grandspicy?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8"),
             getEnv("DB_USER", "root"),
             getEnv("DB_PASSWORD", "root")
         );

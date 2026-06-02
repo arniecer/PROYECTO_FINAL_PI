@@ -261,11 +261,12 @@ a {
 }
 
 .product-image {
- max-width: 33vw;
+ max-width: 300px;
 }
 
 .product-image img {
  width: 100%;
+ height: auto;
  border-radius: 8px;
 }
 
