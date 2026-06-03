@@ -239,4 +239,4 @@ src/main/java/com/grandspicy/
 
 ## Licencia
 
-Proyecto academico - 1 de DAM.
+Hecho por Arniecer Obispo - 1 DAM.
