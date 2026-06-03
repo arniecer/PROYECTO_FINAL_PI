@@ -1,23 +1,21 @@
 # GrandSpicy
 
-Plataforma web de catalogo de productos picantes. Los usuarios pueden descubrir salsas, especias, snacks y aceites picantes, ver su informacion, valorarlos y dejar reseñas. Los administradores tienen un panel para gestionar productos y usuarios.
+Plataforma web de catalogo de productos picantes. Los usuarios pueden descubrir salsas, especias, snacks y aceites picantes, ver su informacion, valorarlos y dejar resenas. Los administradores tienen un panel para gestionar productos y usuarios.
 
 ---
 
-## Que ofrece
+## Caracteristicas
 
-**Cualquier visitante** puede ver el catalogo, los detalles de cada producto y registrarse.
-
-**Un usuario registrado** puede iniciar sesion, escribir reseñas y acceder a su perfil con el historial de reseñas.
-
-**Un administrador** tiene un panel desde el que anadir, editar y eliminar productos, ademas de gestionar los usuarios registrados.
+- Cualquier visitante puede ver el catalogo, los detalles de cada producto y registrarse.
+- Un usuario registrado puede iniciar sesion, escribir resenas y acceder a su perfil con el historial de resenas.
+- Un administrador tiene un panel desde el que anadir, editar y eliminar productos, ademas de gestionar los usuarios registrados.
 
 ---
 
-## Tecnologias usadas
+## Tecnologias
 
-| Que | Como |
-|-----|------|
+| Capa | Tecnologia |
+|------|------------|
 | Lenguaje | Java 17 |
 | Backend | Servlets 4.0 + JSP + JSTL |
 | Frontend | HTML5 + CSS3 (tema oscuro, responsive) |
@@ -29,7 +27,7 @@ Plataforma web de catalogo de productos picantes. Los usuarios pueden descubrir 
 
 ---
 
-## Como arrancarlo
+## Puesta en marcha
 
 ### Con Docker (desarrollo local)
 
@@ -39,10 +37,130 @@ docker compose up --build
 
 La aplicacion arranca en `http://localhost`.
 
-### En produccion (AWS EC2 con HTTPS)
+### Con Docker (produccion)
 
 ```bash
-# 1. Clonar y arrancar
+git clone https://github.com/arniecer/PROYECTO_FINAL_PI.git
+cd PROYECTO_FINAL_PI
+docker compose up --build -d
+```
+
+Todos los contenedores tienen `restart: unless-stopped`, se levantan solos al reiniciar la maquina.
+
+### Con Tomcat embebido (desarrollo sin Docker)
+
+```bash
+mvn clean compile exec:java
+```
+
+Requiere MySQL 8.0 accesible en `localhost:3306`. La base de datos y las tablas se crean automaticamente al arrancar.
+
+---
+
+## Variables de entorno
+
+La aplicacion y los contenedores se configuran mediante variables de entorno definidas en `docker-compose.yml`.
+
+| Variable | Contenedor | Descripcion | Valor por defecto |
+|----------|------------|-------------|-------------------|
+| `DB_URL` | app | URL de conexion a MySQL | `jdbc:mysql://mysql:3306/grandspicy?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC` |
+| `DB_USER` | app | Usuario de MySQL | `root` |
+| `DB_PASSWORD` | app | Contrasena de MySQL | `root` |
+
+Si no se definen, el codigo fuente utiliza valores por defecto para desarrollo local (`localhost:3306`).
+
+---
+
+## Adaptacion a un dominio propio
+
+La configuracion actual del repositorio esta preparada para el dominio `grands.yatat.es`. Para desplegar la aplicacion con un dominio diferente es necesario modificar los siguientes archivos:
+
+### 1. nginx/default.conf
+
+```nginx
+server {
+    listen 80;
+    server_name tudominio.com;   # <-- cambiar aqui
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location /img/ {
+        root /usr/share/nginx/html;
+    }
+
+    location /images/product {
+        proxy_pass http://app:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /images/ {
+        root /usr/share/nginx/html;
+    }
+
+    location / {
+        proxy_pass http://app:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+### 2. nginx/default-ssl.conf (si se utiliza SSL)
+
+```nginx
+server {
+    listen 80;
+    server_name tudominio.com;       # <-- cambiar aqui
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name tudominio.com;       # <-- cambiar aqui
+
+    ssl_certificate /etc/letsencrypt/live/tudominio.com/fullchain.pem;    # <-- cambiar aqui
+    ssl_certificate_key /etc/letsencrypt/live/tudominio.com/privkey.pem;  # <-- cambiar aqui
+    ...
+}
+```
+
+Las rutas de los certificados SSL las genera Certbot automaticamente segun el dominio indicado durante la solicitud.
+
+### 3. setup-ssl.sh
+
+```bash
+DOMAIN="tudominio.com"        # <-- cambiar aqui
+EMAIL="admin@tudominio.com"   # <-- cambiar aqui
+```
+
+### Resumen de cambios necesarios
+
+| Archivo | Lineas a modificar |
+|---------|-------------------|
+| `nginx/default.conf` | `server_name` |
+| `nginx/default-ssl.conf` | `server_name` (x2) y rutas de certificados (x2) |
+| `setup-ssl.sh` | `DOMAIN` y `EMAIL` |
+
+---
+
+## Despliegue en produccion con SSL
+
+Requisitos previos:
+- DNS del dominio apuntando a la IP publica del servidor.
+- Puertos 80 y 443 abiertos en el firewall.
+- Docker y Docker Compose instalados.
+
+Pasos:
+
+```bash
+# 1. Clonar el repositorio y arrancar los contenedores
 git clone https://github.com/arniecer/PROYECTO_FINAL_PI.git
 cd PROYECTO_FINAL_PI
 docker compose up --build -d
@@ -51,30 +169,11 @@ docker compose up --build -d
 ./setup-ssl.sh
 ```
 
-La aplicacion arranca en `https://grands.yatat.es`.
-
-### En desarrollo (Tomcat embebido)
-
-```bash
-mvn clean compile exec:java
-```
-
-Necesitas tener MySQL 8.0 en `localhost:3306`. La base de datos y las tablas se crean solas al arrancar.
+El script `setup-ssl.sh` solicita los certificados a Let's Encrypt y luego sustituye `nginx/default.conf` por `nginx/default-ssl.conf` para habilitar HTTPS con redireccion automatica de HTTP a HTTPS.
 
 ---
 
-## Usuarios por defecto
-
-| Usuario | Contrasena | Rol |
-|---------|------------|-----|
-| admin | admin1234 | ADMIN |
-| user | user123 | USER |
-
----
-
-## Docker y despliegue
-
-La aplicacion se despliega con cuatro contenedores:
+## Arquitectura de contenedores
 
 ```
 docker-compose.yml
@@ -91,43 +190,36 @@ docker-compose.yml
   |     - Variables de entorno: DB_URL, DB_USER, DB_PASSWORD
   |
   +-- grandspicy-nginx (Nginx 1.25)
-  |     - Puerto 80 y 443 expuestos al host
+  |     - Puertos 80 y 443 expuestos al host
   |     - Proxy inverso hacia grandspicy-app:8080
-  |     - Sirve estaticos (/img/, /images/) directamente
-  |     - Config SSL con Certbot
+  |     - Sirve recursos estaticos (/img/, /images/) directamente
+  |     - Configuracion SSL con Certbot
   |
   +-- grandspicy-certbot (Certbot)
         - Solo se ejecuta bajo demanda (profile: ssl-setup)
-        - Genera certificados SSL para GrandS.yatat.es
+        - Genera certificados SSL
 ```
 
 El Dockerfile compila el proyecto con Maven y genera un WAR que se despliega en Tomcat 9.
 
-**Para desplegar en produccion (AWS EC2):**
+---
 
-```bash
-# 1. En la maquina virtual
-git clone https://github.com/arniecer/PROYECTO_FINAL_PI.git
-cd PROYECTO_FINAL_PI
+## Usuarios por defecto
 
-# 2. Arrancar todo (sin SSL aun)
-docker compose up --build -d
-
-# 3. Configurar SSL con Certbot
-./setup-ssl.sh
-```
-
-Todos los contenedores tienen `restart: unless-stopped`, asi que se levantan solos al reiniciar la maquina.
+| Usuario | Contrasena | Rol |
+|---------|------------|-----|
+| admin | admin1234 | ADMIN |
+| user | user123 | USER |
 
 ---
 
 ## Seguridad
 
-- Autenticacion por sesion (HttpSession)
-- Las rutas `/admin/*`, `/profile` y `/review` estan protegidas por un filtro
-- Las contraseñas se guardan cifradas con SHA-256 + salt aleatorio
-- Todas las consultas SQL usan PreparedStatement para evitar inyeccion SQL
-- En produccion, la base de datos no esta expuesta al exterior
+- Autenticacion por sesion (HttpSession).
+- Las rutas `/admin/*`, `/profile` y `/review` estan protegidas por un filtro.
+- Las contrasenas se almacenan cifradas con SHA-256 y salt aleatorio.
+- Todas las consultas SQL usan PreparedStatement para evitar inyeccion SQL.
+- En produccion la base de datos no esta expuesta al exterior.
 
 ---
 
@@ -136,7 +228,7 @@ Todos los contenedores tienen `restart: unless-stopped`, asi que se levantan sol
 ```
 src/main/java/com/grandspicy/
   Main.java                  - Arranca Tomcat embebido
-  dao/BaseDatos.java         - Todo el acceso a base de datos
+  dao/BaseDatos.java         - Acceso a base de datos
   filtro/FiltroAutenticacion.java  - Control de acceso
   modelo/                    - Producto, Usuario, Resena (POJOs)
   servlet/                   - Controladores HTTP (7 servlets)
@@ -147,6 +239,4 @@ src/main/java/com/grandspicy/
 
 ## Licencia
 
-Proyecto academico - 1º de DAM.
-
-
+Proyecto academico - 1 de DAM.
