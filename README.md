@@ -173,6 +173,38 @@ El script `setup-ssl.sh` solicita los certificados a Let's Encrypt y luego susti
 
 ---
 
+## Copias de seguridad
+
+El sistema de backups se compone de dos scripts que se ejecutan mediante cron en el servidor de produccion, mas un tercero para restaurar.
+
+### backup_total.sh
+
+Se ejecuta los domingos a las 02:00. Realiza un volcado completo de la base de datos con `mysqldump --flush-logs`, guarda la posicion actual del binlog, y empaqueta los certificados SSL de Let's Encrypt. Los archivos se almacenan en `/home/ubuntu/backups/totales/` con el formato `grandspicy_YYYY-MM-DD.sql.gz`. Los backups con mas de 28 dias se eliminan automaticamente.
+
+El flag `--flush-logs` cierra el binlog activo y abre uno nuevo, marcando el inicio de un nuevo ciclo de cambios incrementales.
+
+### backup_incremental.sh
+
+Se ejecuta de lunes a sabado a las 03:00. Recorre los binlogs disponibles en MySQL y copia aquellos que aun no se hayan guardado a la carpeta `/home/ubuntu/backups/incrementales/`. De esta forma solo se almacenan los cambios ocurridos desde el ultimo backup completo. La retencion es de 28 dias.
+
+### restore.sh
+
+Restaura un backup completo a partir de su nombre de archivo y pregunta si se desean aplicar los cambios incrementales posteriores:
+
+```bash
+./scripts/restore.sh grandspicy_2026-06-07.sql.gz
+```
+
+Los incrementales se aplican en orden mediante `mysqlbinlog` para recuperar el estado exacto de la base de datos en el momento deseado.
+
+### Requisitos en produccion
+
+- Los scripts estan pensados para ejecutarse en el mismo servidor donde corre Docker.
+- MySQL debe tener la opcion `log_bin` activada (binlog habilitado).
+- El directorio de backups se crea automaticamente en `/home/ubuntu/backups/`.
+
+---
+
 ## Arquitectura de contenedores
 
 ```
