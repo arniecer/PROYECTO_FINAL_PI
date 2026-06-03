@@ -175,7 +175,7 @@ El script `setup-ssl.sh` solicita los certificados a Let's Encrypt y luego susti
 
 ## Copias de seguridad
 
-El sistema de backups se compone de dos scripts que se ejecutan mediante cron en el servidor de produccion, mas un tercero para restaurar.
+El sistema de backups se compone de dos scripts que se ejecutan mediante cron en el servidor de produccion, mas un tercero para restaurar. Los scripts estan en `scripts/`.
 
 ### backup_total.sh
 
@@ -183,9 +183,77 @@ Se ejecuta los domingos a las 02:00. Realiza un volcado completo de la base de d
 
 El flag `--flush-logs` cierra el binlog activo y abre uno nuevo, marcando el inicio de un nuevo ciclo de cambios incrementales.
 
+```bash
+#!/bin/bash
+
+fecha=$(date +%Y-%m-%d)
+pass="root"
+proyecto="/home/ubuntu/PROYECTO_FINAL_PI"
+carpeta="/home/ubuntu/backups"
+
+mkdir -p $carpeta/totales
+mkdir -p $carpeta/incrementales
+
+echo "[$(date)] Empezando backup completo del dia $fecha"
+
+sudo docker exec grandspicy-db \
+  mysqldump -u root -p$pass \
+  --databases grandspicy \
+  --routines --triggers --flush-logs \
+  | gzip > $carpeta/totales/grandspicy_$fecha.sql.gz
+
+if [ $? -eq 0 ]; then
+  echo "[$(date)] Backup de la base de datos guardado"
+else
+  echo "[$(date)] ERROR: algo fallo en el volcado de la base de datos"
+fi
+
+sudo docker exec grandspicy-db \
+  mysql -u root -p$pass -e "SHOW MASTER STATUS;" \
+  > $carpeta/totales/posicion_binlog_$fecha.txt
+
+sudo tar -czf $carpeta/totales/certificados_$fecha.tar.gz \
+  -C $proyecto certbot/conf/ 2>/dev/null
+
+find $carpeta/totales -name "grandspicy_*.sql.gz" -mtime +28 -delete
+find $carpeta/totales -name "certificados_*.tar.gz" -mtime +28 -delete
+find $carpeta/totales -name "posicion_binlog_*.txt" -mtime +28 -delete
+
+echo "[$(date)] Backup completo terminado"
+```
+
 ### backup_incremental.sh
 
 Se ejecuta de lunes a sabado a las 03:00. Recorre los binlogs disponibles en MySQL y copia aquellos que aun no se hayan guardado a la carpeta `/home/ubuntu/backups/incrementales/`. De esta forma solo se almacenan los cambios ocurridos desde el ultimo backup completo. La retencion es de 28 dias.
+
+```bash
+#!/bin/bash
+
+fecha=$(date +%Y-%m-%d)
+pass="root"
+carpeta="/home/ubuntu/backups"
+
+mkdir -p $carpeta/incrementales
+
+echo "[$(date)] Empezando backup incremental del dia $fecha"
+
+binlogs=$(sudo docker exec grandspicy-db \
+  mysql -u root -p$pass -N -e "SHOW BINARY LOGS;" | awk "{print \$1}")
+
+for log in $binlogs; do
+  if [ -f "$carpeta/incrementales/$log" ]; then
+    continue
+  fi
+  sudo docker cp grandspicy-db:/var/lib/mysql/$log $carpeta/incrementales/$log
+  if [ $? -eq 0 ]; then
+    echo "  guardado: $log"
+  fi
+done
+
+find $carpeta/incrementales -name "binlog.*" -mtime +28 -delete
+
+echo "[$(date)] Backup incremental terminado"
+```
 
 ### restore.sh
 
@@ -196,6 +264,60 @@ Restaura un backup completo a partir de su nombre de archivo y pregunta si se de
 ```
 
 Los incrementales se aplican en orden mediante `mysqlbinlog` para recuperar el estado exacto de la base de datos en el momento deseado.
+
+```bash
+#!/bin/bash
+
+carpeta="/home/ubuntu/backups"
+
+if [ -z "$1" ]; then
+  echo "Tienes que decirme que backup quieres restaurar"
+  echo ""
+  echo "Backups disponibles:"
+  ls -1 $carpeta/totales/*.sql.gz 2>/dev/null || echo "  (no hay ninguno)"
+  exit 1
+fi
+
+backup="$carpeta/totales/$1"
+if [ ! -f "$backup" ]; then
+  echo "No encuentro el archivo $backup"
+  exit 1
+fi
+
+fecha_backup=$(echo $1 | sed 's/grandspicy_//' | sed 's/\.sql\.gz//')
+
+echo "Restaurando el backup completo de $fecha_backup ..."
+gunzip -c "$backup" | sudo docker exec -i grandspicy-db mysql -u root -proot
+
+if [ $? -ne 0 ]; then
+  echo "ERROR: no se pudo restaurar la base de datos"
+  exit 1
+fi
+
+echo "Base de datos restaurada correctamente"
+
+echo ""
+echo "Archivos incrementales disponibles:"
+ls -1 $carpeta/incrementales/binlog.* 2>/dev/null || echo "  (no hay)"
+
+echo ""
+read -p "Quieres aplicar los cambios incrementales? (s/n): " respuesta
+
+if [ "$respuesta" != "s" ] && [ "$respuesta" != "S" ]; then
+  echo "Restauracion completada (sin incrementales)"
+  exit 0
+fi
+
+for log in $(ls -1 $carpeta/incrementales/binlog.* 2>/dev/null | sort); do
+  echo "  aplicando cambios de: $(basename $log)"
+  sudo docker exec -i grandspicy-db mysqlbinlog $log | sudo docker exec -i grandspicy-db mysql -u root -proot
+  if [ $? -ne 0 ]; then
+    echo "  aviso: puede que algunos cambios ya estuvieran aplicados, seguimos"
+  fi
+done
+
+echo "Restauracion completada con todos los cambios"
+```
 
 ### Requisitos en produccion
 
